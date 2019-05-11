@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env python3
 import psutil
 import openrazer.client
 from time import sleep
@@ -63,12 +63,29 @@ def display_battery(device):
             for x in range(xborder, devcols(device)):
                 devsetcolor(device, x, y, [255, 0, 0])
 
+def display_cpu(device):
+    cpulevel = psutil.cpu_percent()
+
+    x = 14
+    y = 2
+
+    if cpulevel > 50:
+        devsetcolor(device, x, y, [255, 0, 0])
+    elif cpulevel > 5:
+        green_val = 255 - ((cpulevel - 5 ) * 255 / 45)
+        red_val = (cpulevel - 5 ) * 255 / 45
+        devsetcolor(device, x, y, [red_val, green_val, 0])
+    else:
+        devsetcolor(device, x, y, [255, 255, 255])
+
+
 
 def mainloop():
     try:
         while 1:
             display_white(device)
             display_battery(device)
+            display_cpu(device)
             devdraw(device)
             sleep(0.25)
     except KeyboardInterrupt:
